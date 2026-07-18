@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OfferTrack · 秋招进度管理</title>
+<meta name="description" content="应届秋招进度管理：投递管道 Kanban、笔试面试倒计时、每周备战打卡与月度总结。数据只存在你的浏览器里。">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap site-header-inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2.5" y="13" width="3" height="6" rx="1" fill="#16181d"/>
+        <rect x="7.5" y="10" width="3" height="9" rx="1" fill="#16181d"/>
+        <rect x="12.5" y="7" width="3" height="12" rx="1" fill="#16181d"/>
+        <rect x="17.5" y="4" width="3" height="15" rx="1" fill="#16a34a"/>
+      </svg>
+      <div class="brand-text">
+        <strong>OfferTrack</strong>
+        <span>秋招进度管理</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="today mono" id="todayLabel"></span>
+      <button type="button" class="btn" id="btnImport">导入</button>
+      <button type="button" class="btn" id="btnExport">导出备份</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ 投递进度追踪 ============ -->
+  <section class="card tech-grid" id="trackerCard" aria-labelledby="trackerTitle">
+    <header class="card-header">
+      <div class="p0-group" role="group" aria-label="秋招进度总览">
+        <h1 class="p0-title" id="trackerTitle">投递进度</h1>
+        <output class="p0-value" id="p0Active" aria-label="进行中的公司数">0</output>
+        <span class="p0-unit">家进行中</span>
+        <output class="p0-value p0-offer" id="p0Offer" aria-label="Offer 数">0</output>
+        <span class="p0-unit">个 Offer</span>
+        <p class="p0-next" id="p0Next">暂无近期笔试面试</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn" id="btnClearSamples" hidden>清空示例</button>
+        <button type="button" class="btn btn-primary" id="btnAdd">
+          <svg class="icon-inline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12.0684 2.03418C12.5654 2.03421 12.9687 2.43755 12.9688 2.93457V11.0996H21.0654C21.5625 11.0996 21.9658 11.503 21.9658 12C21.9658 12.497 21.5625 12.9004 21.0654 12.9004H12.9688V21.0654C12.9687 21.5624 12.5654 21.9658 12.0684 21.9658C11.5713 21.9658 11.168 21.5625 11.168 21.0654V12.9004H2.93457C2.43751 12.9004 2.03418 12.4971 2.03418 12C2.03418 11.5029 2.43751 11.0996 2.93457 11.0996H11.168V2.93457C11.168 2.43753 11.5713 2.03418 12.0684 2.03418Z" fill="currentColor"/></svg>
+          记录公司
+        </button>
+      </div>
+    </header>
+
+    <div class="funnel" id="funnel" aria-label="阶段漏斗"></div>
+
+    <div class="upcoming" aria-label="近期笔试面试">
+      <h2 class="section-title">近期笔试 / 面试</h2>
+      <div class="event-row" id="eventRow"></div>
+    </div>
+
+    <div class="stage-tabs">
+      <div class="seg-wrap" id="stageTabs" role="tablist" aria-label="选择阶段"></div>
+    </div>
+
+    <div class="board" id="board" aria-label="投递看板"></div>
+    <div class="list-single" id="listSingle" aria-label="当前阶段列表"></div>
+  </section>
+
+  <!-- ============ 每周备战打卡 ============ -->
+  <section class="card tech-grid" id="checkinCard" aria-labelledby="checkinTitle">
+    <header class="card-header">
+      <div class="p0-group" role="group" aria-label="本周备战打卡状态">
+        <h1 class="p0-title" id="checkinTitle">每周备战打卡</h1>
+        <output class="p0-value" id="p0Done" aria-label="本周已完成项数">0/0</output>
+        <span class="p0-unit">本周完成</span>
+        <p class="p0-streak" id="p0Streak">连续全勤 0 周</p>
+      </div>
+      <span class="p0-date mono" id="weekLabel"></span>
+    </header>
+
+    <div class="cols">
+      <div aria-label="本周打卡清单">
+        <h2 class="section-title">本周清单 <span class="mono" id="weekIndex"></span></h2>
+        <ul class="todo-list" id="todoList"></ul>
+        <form class="add-row" id="addForm">
+          <input type="text" id="addInput" maxlength="30" placeholder="加一个本周打卡项，例如：刷行测 3 次" autocomplete="off">
+          <button type="submit" class="btn" aria-label="添加打卡项">
+            <svg class="icon-inline" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12.0684 2.03418C12.5654 2.03421 12.9687 2.43755 12.9688 2.93457V11.0996H21.0654C21.5625 11.0996 21.9658 11.503 21.9658 12C21.9658 12.497 21.5625 12.9004 21.0654 12.9004H12.9688V21.0654C12.9687 21.5624 12.5654 21.9658 12.0684 21.9658C11.5713 21.9658 11.168 21.5625 11.168 21.0654V12.9004H2.93457C2.43751 12.9004 2.03418 12.4971 2.03418 12C2.03418 11.5029 2.43751 11.0996 2.93457 11.0996H11.168V2.93457C11.168 2.43753 11.5713 2.03418 12.0684 2.03418Z" fill="currentColor"/></svg>
+            添加
+          </button>
+        </form>
+      </div>
+
+      <div class="col-right" aria-label="本月进度总结">
+        <div class="month-head">
+          <h2 class="month-name" id="monthName">本月进度</h2>
+        </div>
+        <div class="week-rows" id="weekRows"></div>
+        <div class="month-total">
+          <span>全勤 <output id="statFull">0</output> 周</span>
+          <span>月完成率 <output id="statRate">0%</output></span>
+          <span>累计 <output id="statTotal">0</output> 项次</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <span>数据仅保存在本浏览器（localStorage），定期用「导出备份」保存 JSON。</span>
+    <span class="mono">OfferTrack v0.1 · local-first</span>
+  </footer>
+</main>
+
+<!-- ============ 公司编辑浮层 ============ -->
+<div class="inspector" id="inspector" hidden>
+  <form class="inspector-panel" id="inspectorForm" novalidate>
+    <h2 class="inspector-title">
+      <span id="inspectorTitle">记录公司</span>
+      <button type="button" class="icon-btn" id="btnCloseInspector" aria-label="关闭">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.9542 4.77253C18.3056 4.42106 18.8761 4.42106 19.2276 4.77253C19.579 5.12401 19.579 5.69452 19.2276 6.04597L13.2735 12.0001L19.2276 17.9542C19.5791 18.3056 19.5791 18.8761 19.2276 19.2276C18.8761 19.5791 18.3056 19.5791 17.9542 19.2276L12.0001 13.2735L6.04595 19.2276C5.69451 19.5791 5.12399 19.579 4.77252 19.2276C4.42104 18.8761 4.42104 18.3056 4.77252 17.9542L10.7266 12.0001L4.77252 6.04597C4.42104 5.6945 4.42104 5.124 4.77252 4.77253C5.12399 4.42107 5.69448 4.42106 6.04595 4.77253L12.0001 10.7266L17.9542 4.77253Z" fill="currentColor"/></svg>
+      </button>
+    </h2>
+    <p class="form-error" id="formError" role="alert"></p>
+    <div class="field">
+      <label for="fName">公司名称 *</label>
+      <input type="text" id="fName" autocomplete="off" maxlength="40" placeholder="例如：华为">
+    </div>
+    <div class="field">
+      <label for="fPos">岗位 / 方向</label>
+      <input type="text" id="fPos" autocomplete="off" maxlength="60" placeholder="例如：结构与岩土工程师">
+    </div>
+    <div class="field">
+      <label>当前阶段</label>
+      <div class="seg-wrap" id="fStageSeg"></div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="fEventLabel">下一事件</label>
+        <input type="text" id="fEventLabel" autocomplete="off" maxlength="30" placeholder="例如：笔试 / 一面">
+      </div>
+      <div class="field">
+        <label for="fEventDate">事件日期</label>
+        <input type="date" id="fEventDate">
+      </div>
+    </div>
+    <div class="field">
+      <label for="fNote">备注</label>
+      <textarea id="fNote" maxlength="200" placeholder="HC、内推人、准备要点……"></textarea>
+    </div>
+    <div class="inspector-actions">
+      <button type="submit" class="btn btn-solid" id="btnSave">保存</button>
+      <button type="button" class="btn" id="btnCancel">取消</button>
+      <button type="button" class="btn btn-danger" id="btnDelete" hidden>删除</button>
+    </div>
+  </form>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
