@@ -1,0 +1,9 @@
+{
+  "name": "offertrack",
+  "version": "0.1.0",
+  "private": true,
+  "description": "秋招进度管理：投递管道 Kanban + 每周备战打卡，local-first 纯静态应用",
+  "scripts": {
+    "dev": "node dev-server.js"
+  }
+}

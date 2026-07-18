@@ -1,0 +1,15 @@
+{
+  "name": "OfferTrack · 秋招进度管理",
+  "short_name": "OfferTrack",
+  "description": "应届秋招进度管理：投递管道、笔试面试倒计时、每周备战打卡。数据只存在本地浏览器。",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "zh-CN",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
