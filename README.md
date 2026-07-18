@@ -54,7 +54,7 @@ python -m http.server 7100
 
 - 纯 HTML / CSS / JavaScript，零框架、零构建、零外部依赖（可离线）
 - PWA：`manifest.webmanifest` + `sw.js`（HTTP(S) 下可"添加到主屏幕"）
-- 图标生成脚本：`tools/make-icons.py`（需要 Pillow）
+- 图标为矢量 `icon.svg`；如需 PNG 版（例如 iOS 主屏幕图标）可运行 `tools/make-icons.py` 生成（需要 Pillow）
 
 ## Roadmap 想法
 

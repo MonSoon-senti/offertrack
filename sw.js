@@ -1,14 +1,12 @@
 /* OfferTrack service worker — cache-first for app shell */
-var CACHE = 'offertrack-v1';
+var CACHE = 'offertrack-v2';
 var ASSETS = [
   './',
   'index.html',
   'styles.css',
   'app.js',
   'manifest.webmanifest',
-  'icon-192.png',
-  'icon-512.png',
-  'apple-touch-icon.png'
+  'icon.svg'
 ];
 
 self.addEventListener('install', function (event) {
